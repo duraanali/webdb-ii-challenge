@@ -11,13 +11,13 @@ router.post('/', (req, res) => {
     const postData = req.body;
 
     db('cars')
-        .insert(postData, 'name, budget')
-        .then(([name, budget]) => {
-            db('posts')
-                .where({ name, budget })
+        .insert(postData, 'vin', 'make', 'model', 'milleage', 'transmission_type', 'title_status')
+        .then(([vin, make, model, milleage]) => {
+            db('cars')
+                .where({ vin, make, model, milleage })
                 .first()
-                .then(accounts => {
-                    res.status(200).json(accounts);
+                .then(cars => {
+                    res.status(200).json(cars);
                 });
         })
         .catch(err => {
@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
 
 router.get('/', (req, res) => {
     db('cars')
-        .select('vin', 'make', 'model', 'milleage', 'transmission_type', 'title_status')
+        .select('id', 'vin', 'make', 'model', 'milleage', 'transmission_type', 'title_status')
         .then(cars => {
             res.status(200).json(cars);
         })
@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
     const changes = req.body;
-    db('accounts')
+    db('cars')
         .where('id', req.params.id)
         .update(changes)
         .then(count => {
@@ -53,7 +53,7 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
 
-    db('accounts')
+    db('cars')
         .where({ id: req.params.id })
         .del()
         .then(count => {
